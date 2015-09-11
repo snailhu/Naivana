@@ -1,0 +1,255 @@
+ul,body{
+    margin: 0;
+    padding: 0;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background:#fff ;
+    font-family: 'microsoft yahei';
+}
+a:focus{outline:none;}
+ul li{
+    list-style-type: none;
+}
+.placeholder{
+    color: #c3c3c3;
+    position: absolute;
+    z-index: 99;
+    left: 2%;
+    cursor: auto;
+}
+.form-control{
+    font-size: 18px;
+    border: none;
+    height: 24px;
+    padding-left: 2%;
+    z-index: 9999999;
+    background-color: #fff;
+    vertical-align: middle;
+    outline: none;
+}
+.group-input{
+    position: relative;
+    border:1px solid #dadada;
+    font-family: SimSun;
+}
+.logo-bar{
+    height: 100%;
+    width: 86%;
+    margin: 0 auto;
+    display:table;
+    *position:relative;
+}
+.nav{
+    background: #0066b3;
+    min-width:1000px;
+    height: 10%;
+    width: 100%;
+    position: relative;
+    min-height: 65px;
+}
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+    height: 0;
+}
+.clearfix {
+    zoom: 1;
+}
+a{
+    text-decoration: none;
+}
+.category{
+    background: #e0e0e0;
+    border-top:1px solid #d3d3d3 ;
+    border-bottom: 1px solid #d3d3d3;
+}
+.wrap{
+     width:49.9%;height:100%;display:table;float: left;
+    *position:relative;
+}
+.search-wrap{
+    height:45px;display:table;float: right;
+    *width:40%;
+    *position:relative;
+}
+.hack{
+    display:table-cell;vertical-align:middle;
+    *position:absolute;*top:50%;
+}
+.cnt{
+    *position:relative;*top:-50%;
+}
+.right{
+    text-align: right;
+    *right:0;
+}
+.cnt a{
+    color: #fff;
+}
+.float-hack{
+    *float: left;
+}
+.search-height{
+    line-height: 26px;
+}
+
+.link-line a{
+    margin-right: 3%;
+}
+.href-block{
+    display: inline-block;
+    height: 45px;
+    line-height: 45px;
+    position: relative;
+}
+.href-block{
+    *display: inline;
+}
+.downline{
+    border-bottom: 2px solid #d3d3d3;
+}
+.downline-1{
+    border-bottom: 1px solid #d3d3d3;
+}
+.left{
+    margin-left: 2%;
+}
+.search-box{
+    background: #fff;
+    width:250px;
+    float: right;
+    font-family: SimSun;
+    height: 27px;
+}
+.search-box .placeholder{
+    height: 27px;
+    line-height: 27px;
+}
+.search-box .form-control{
+    line-height: 25px;
+    font-size: 16px;
+    width: 85%;
+}
+.search-box img{
+    vertical-align: middle;
+    cursor: pointer;
+}
+.arrow1{
+    position: absolute;
+    width: 0px;
+    height:0px;
+    border-width: 6px;
+    border-style: solid;
+    border-color:  transparent transparent  #0066b3 transparent;
+    bottom: 0;
+    left: 40%;
+}
+.suffix-inline{
+    display: inline-block;
+}
+.suffix-inline{
+    *display:inline;
+}
+.date-input{
+    width: 70px;
+    height: 25px;
+    padding: 0 30px;
+}
+.content-input{
+    width: 130px;
+    height: 25px;
+}
+.week-input{
+    width: 40px;
+    height: 25px;
+    padding: 0 10px;
+}
+.location{
+    color: #404040;
+}
+.location span{
+    line-height: 35px;
+}
+.location span a{
+    text-decoration: none;
+    color: #404040;
+}
+
+.input-item{
+    padding: 8px 0;
+}
+a{
+    text-decoration: none;
+    color: #000000;
+}
+.clicked {
+    color:#0066b3;
+}
+
+.button{
+    border: 0;
+    width: 100px;
+    height: 30px;
+    border-radius: 2px;
+    outline: 0;
+    cursor: pointer;
+}
+.lg-button{
+    border: 0;
+    width: 150px;
+    height: 30px;
+    border-radius: 4px;
+}
+.lt-button{
+    border: 0;
+    width: 50px;
+    height: 30px;
+    border-radius: 4px;
+}
+.sure{
+    background: #0066b3;
+    color: #ffffff;
+}
+.cancel{
+    background: #e3e3e3;
+    color: #909090;
+}
+.downline-blue-1{
+    border-bottom: 1px solid #0066b3;
+}
+.downline-blue{
+    border-bottom: 2px solid #0066b3;
+}
+.select-input{
+	height:25px;
+	padding-left:5px;
+	width:120px;
+	outline:0;
+}
+input[type=checkbox]{
+	margin:0;
+	vertical-align:middle;
+}
+.relative{
+	position:relative;
+}
+.status-line{
+    padding: 12px 0 12px;
+    margin-left: 10px;
+}
+ .fresh-logo{
+    padding:0 12px;
+    border-right: 1px solid #d3d3d3;
+    cursor:pointer;
+}
+.edit-logo{
+    padding:0 12px;
+ }
+img{
+	border:0;
+	outline:0;
+}

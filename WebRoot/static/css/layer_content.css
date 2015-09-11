@@ -1,0 +1,89 @@
+#drop-list{
+    position: absolute;
+    left:55%;
+    top:50%;
+    background: #fff;
+    width: 100px;
+    border:1px solid #e3e3e3;
+}
+#drop-list li{
+    height: 25px;
+    line-height: 25px;
+    font-family: SimSun;
+}
+#drop-list li a{
+    color: #909090;
+    padding: 5px 12px;
+}
+#drop-list li:hover{
+    background: #0066b3;
+    color: #fff;
+}
+#drop-list li:hover a{
+    color:#fff;
+}
+.drop-list-contain{
+    position: relative;
+}
+.confirm-item,.edit-item{
+    padding: 4px 0;
+}
+.attention{
+    text-align: center;
+    padding: 5px 0;
+    color: #000;
+}
+.edit-title{
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+    padding-right: 20px;
+}
+.edit-item input[type=text],.edit-item input[type=password]{
+    height: 25px;
+}
+
+.ui-dis-wrap{
+    width: 600px;
+    height:390px;
+    position: relative;
+}
+.ui-dis-left-slider{
+    position: absolute;
+    top: 0;
+    bottom:0;
+    left: 6%;
+    right: 55%;
+}
+.ui-dis-right-slider{
+    position: absolute;
+    top: 0;
+    bottom:0;
+    right: 6%;
+    left: 55%;
+}
+.ui-dis-title{
+    height: 40px;
+    font-size: 14px;
+}
+.ui-dis-content{
+    border: 1px solid #d3d3d3;
+    overflow-y: auto;
+    height: 350px
+}
+.user-lab{
+    background: #e3e3e3;
+    margin:2%;
+    padding:5px;
+}
+.close-ico{
+	width:20px;
+	height:10px;
+}
+ .close-ico:hover{
+     background: url("/Nirvana/static/img/pepsi/close_ico.png") no-repeat center center;
+     cursor: pointer;
+}
+    .double{
+        background: #ebebeb;
+    }    

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!-- 定义调用对象和调用对象的方法 -->
+	<bean id="syncChannels"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject" ref="dataSynchronize" />
+		<property name="targetMethod">
+			<value>syncChannels</value>
+		</property>
+	</bean>
+	<!-- 定义触发时间 -->
+	<bean id="syncChannelsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="syncChannels" />
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<value>0 0 12 * * ?</value>
+		</property>
+	</bean>
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
+	<bean id="startQuertz" lazy-init="false"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="syncChannelsTrigger" />
+				<ref bean="statisticsTrigger"/>
+			</list>
+		</property>
+	</bean>
+
+<bean id="statistics"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject" ref="agentStatics" />
+		<property name="targetMethod">
+			<value>agentStatistics</value>
+		</property>
+	</bean>
+	<!-- 定义触发时间 -->
+	<bean id="statisticsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="statistics" />
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<value>0 47 2 * * ?</value>
+		</property>
+	</bean>
+
+
+</beans>

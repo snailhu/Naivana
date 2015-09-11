@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd ">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.nirvana"></context:component-scan>
+	<aop:aspectj-autoproxy />
+
+	<!-- 该路径下的资源不用过滤 -->
+	<http pattern="/images/**" security="none" />
+	<http pattern="/backend/web/login.html" security="none" />
+	<http pattern="/backend/web/resetpwd/step1" security="none" />
+	<http pattern="/backend/web/resetpwd/step2" security="none" />
+	<http pattern="/backend/web/resetpwd/step3" security="none" />
+	<http pattern="/test/**" security="none" />
+	<http pattern="/backend/app/account/findback/**" security="none" />
+	<http pattern="/backend/web/api/account/findback/**" security="none" />
+	<http pattern="/dealer/app/account/findback/**" security="none" />
+	<http pattern="/store/app/account/findback/**" security="none" />
+	<http pattern="/store/app/account/register" security="none" />
+
+	<http pattern="/backend/web/api/checkexist/**" security="none" />
+
+	<!-- ################################################## backend ######################################################## -->
+	<!-- _______________________________________________ backend web _______________________________________________ -->
+	<!-- backend web 的过滤器链配置 -->
+	<http use-expressions="true" auto-config="true" pattern="/backend/web/**"
+		authentication-manager-ref="backendAuthenticationManager"
+		entry-point-ref="backendWebAuthenticationEntryPoint">
+		<form-login login-processing-url="/backend/web/login"
+			username-parameter="username" password-parameter="password"
+			authentication-success-handler-ref="backendWebAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="backendWebAuthenticationFailureHandler" />
+		<logout invalidate-session="true" logout-success-url="/backend/web/login.html"
+			logout-url="/backend/web/logout" />
+		<!-- session-fixation-protection="none" 此设置禁用默认的SessionManagementFilter -->
+		<session-management session-fixation-protection="none" />
+		<remember-me user-service-ref="backEndUserDetailServiceImpl" />
+		<access-denied-handler ref="backendWebAccessDeniedHandler" />
+		<custom-filter ref="backendWebSessionManagementFilter"
+			position="SESSION_MANAGEMENT_FILTER" />
+		<custom-filter ref="backendWebConCurrentSessionFilter"
+			position="CONCURRENT_SESSION_FILTER" />
+		<custom-filter ref="backendUserSecurityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+	<!--backend web 的SessionManagementFilter配置 -->
+	<beans:bean id="backendWebSessionManagementFilter"
+		class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository"
+			ref="securityContextRepository" />
+		<!-- 处理验证失败的handler -->
+		<beans:property name="authenticationFailureHandler"
+			ref="backendWebAuthenticationFailureHandler" />
+		<!-- 注入session无效的处理策略 -->
+		<beans:property name="invalidSessionStrategy" ref="backendWebInvalidSessionStrategy" />
+	</beans:bean>
+
+	<!-- backend web 的ConCurrentSessionFilter配置 -->
+	<beans:bean id="backendWebConCurrentSessionFilter"
+		class="com.nirvana.security.PartSendJsonURLConcurrentSessionFilter">
+		<beans:constructor-arg name="expiredUrl"
+			value="/backend/web/login.html" />
+		<beans:property name="checker" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 AccessDeniedHandler -->
+	<beans:bean id="backendWebAccessDeniedHandler"
+		class="com.nirvana.security.handler.PartSendJsonURLAccessDeniedHandler">
+		<beans:property name="errorPage" value="/backend/web/nopermissions" />
+		<beans:property name="decider" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 AuthenticationFailureHandler -->
+	<beans:bean id="backendWebAuthenticationFailureHandler"
+		class="com.nirvana.security.handler.PartSendJsonURLAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/backend/web/login.html" />
+		<beans:property name="decider" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 AuthenticationSuccessHandler -->
+	<beans:bean id="backendWebAuthenticationSuccessHandler"
+		class="com.nirvana.security.handler.PartSendJsonURLAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/backend/web/center" />
+		<beans:property name="decider" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 InvalidSessionStrategy -->
+	<beans:bean id="backendWebInvalidSessionStrategy"
+		class="com.nirvana.security.handler.PartSendJsonURLInvalidSessionStrategy">
+		<beans:constructor-arg name="invalidSessionUrl"
+			value="/backend/web/login.html" />
+		<beans:property name="decider" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 AuthenticationEntryPoint设置 -->
+	<beans:bean id="backendWebAuthenticationEntryPoint"
+		class="com.nirvana.security.PartSendJsonURLAuthenticationEntryPoint">
+		<beans:constructor-arg name="loginFormUrl"
+			value="/backend/web/login.html" />
+		<beans:property name="decider" ref="backEndAjaxSendJsonDecider" />
+	</beans:bean>
+
+	<!-- backend web 的 SendJsonDecider -->
+	<beans:bean id="backEndAjaxSendJsonDecider"
+		class="com.nirvana.security.BackEndAjaxSendJsonDecider">
+	</beans:bean>
+
+
+	<!-- _______________________________________________ backend app _______________________________________________ -->
+	<!-- backend app 的过滤器链配置 -->
+	<http use-expressions="true" auto-config="true" pattern="/backend/app/**"
+		authentication-manager-ref="backendAuthenticationManager"
+		entry-point-ref="sendJsonAuthenticationEntryPoint">
+		<form-login login-processing-url="/backend/app/login"
+			username-parameter="username" password-parameter="password"
+			authentication-success-handler-ref="jsonAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="jsonAuthenticationFailureHandler" />
+		<logout invalidate-session="true" logout-url="/backend/app/logout" />
+		<!-- session-fixation-protection="none" 此设置禁用默认的SessionManagementFilter -->
+		<session-management session-fixation-protection="none" />
+		<remember-me user-service-ref="backEndUserDetailServiceImpl" />
+		<access-denied-handler ref="jsonAccessDeniedHandler" />
+		<custom-filter ref="backendAppSessionManagementFilter"
+			position="SESSION_MANAGEMENT_FILTER" />
+		<custom-filter ref="backendAppConCurrentSessionFilter"
+			position="CONCURRENT_SESSION_FILTER" />
+		<custom-filter ref="backendUserSecurityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+	<!--backend app 的SessionManagementFilter配置 -->
+	<beans:bean id="backendAppSessionManagementFilter"
+		class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository"
+			ref="securityContextRepository" />
+		<!-- 处理验证失败的handler -->
+		<beans:property name="authenticationFailureHandler"
+			ref="jsonAuthenticationFailureHandler" />
+		<!-- 注入session无效的处理策略 -->
+		<beans:property name="invalidSessionStrategy" ref="jsonInvalidSessionStrategy" />
+	</beans:bean>
+
+	<!-- backend app 的ConCurrentSessionFilter配置 -->
+	<beans:bean id="backendAppConCurrentSessionFilter"
+		class="com.nirvana.security.JsonConcurrentSessionFilter" />
+
+	<!-- backend 的AuthenticationManager配置 -->
+	<authentication-manager id="backendAuthenticationManager">
+		<authentication-provider ref="backendAuthenticationProvider" />
+	</authentication-manager>
+
+	<!-- backend 的UserSecurityFilter配置 -->
+	<beans:bean id="backendUserSecurityFilter" class="com.nirvana.security.NirvanaSecurityFilter">
+		<!-- 用户拥有的权限 -->
+		<beans:property name="authenticationManager" ref="backendAuthenticationManager" />
+		<!-- 用户是否拥有所请求资源的权限 -->
+		<beans:property name="accessDecisionManager" ref="nirvanaAccessDecisionManager" />
+		<!-- 资源与权限对应关系 -->
+		<beans:property name="securityMetadataSource" ref="backEndSecurityMetadataSource" />
+	</beans:bean>
+
+
+	<!-- _______________________________________________ backend common _______________________________________________ -->
+	<!-- backend 的AuthenticationProvider配置 -->
+	<beans:bean id="backendAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="backEndUserDetailServiceImpl" />
+		<beans:property name="hideUserNotFoundExceptions"
+			value="false" />
+	</beans:bean>
+
+	<!-- backend 的 UserDetailService 配置 -->
+	<beans:bean id="backEndUserDetailServiceImpl"
+		class="com.nirvana.security.BackEndUserDetailServiceImpl" />
+
+	<!-- backend 的 SecurityMetadataSource 配置 -->
+	<beans:bean id="backEndSecurityMetadataSource"
+		class="com.nirvana.security.BackEndSecurityMetadataSource" />
+
+
+
+
+	<!-- ################################################## dealer ######################################################## -->
+
+	<!-- dealer app 的过滤器链配置 -->
+	<http use-expressions="true" auto-config="true" pattern="/dealer/app/**"
+		authentication-manager-ref="dealerAuthenticationManager"
+		entry-point-ref="sendJsonAuthenticationEntryPoint">
+		<form-login login-processing-url="/dealer/app/login"
+			username-parameter="username" password-parameter="password"
+			authentication-success-handler-ref="jsonAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="jsonAuthenticationFailureHandler" />
+		<logout invalidate-session="true" logout-url="/dealer/app/logout" />
+		<!-- session-fixation-protection="none" 此设置禁用默认的SessionManagementFilter -->
+		<session-management session-fixation-protection="none" />
+		<remember-me user-service-ref="dealerUserDetailServiceImpl" />
+		<access-denied-handler ref="jsonAccessDeniedHandler" />
+		<custom-filter ref="dealerAppSessionManagementFilter"
+			position="SESSION_MANAGEMENT_FILTER" />
+		<custom-filter ref="dealerAppConCurrentSessionFilter"
+			position="CONCURRENT_SESSION_FILTER" />
+		<custom-filter ref="dealerUserSecurityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+	<!--dealer app 的SessionManagementFilter配置 -->
+	<beans:bean id="dealerAppSessionManagementFilter"
+		class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository"
+			ref="securityContextRepository" />
+		<!-- 处理验证失败的handler -->
+		<beans:property name="authenticationFailureHandler"
+			ref="jsonAuthenticationFailureHandler" />
+		<!-- 注入session无效的处理策略 -->
+		<beans:property name="invalidSessionStrategy" ref="jsonInvalidSessionStrategy" />
+	</beans:bean>
+
+	<!-- dealer app 的ConCurrentSessionFilter配置 -->
+	<beans:bean id="dealerAppConCurrentSessionFilter"
+		class="com.nirvana.security.JsonConcurrentSessionFilter" />
+
+
+	<!-- dealer 的AuthenticationManager配置 -->
+	<authentication-manager id="dealerAuthenticationManager">
+		<authentication-provider ref="dealerAuthenticationProvider" />
+	</authentication-manager>
+
+	<!-- dealer 的UserSecurityFilter配置 -->
+	<beans:bean id="dealerUserSecurityFilter" class="com.nirvana.security.NirvanaSecurityFilter">
+		<!-- 用户拥有的权限 -->
+		<beans:property name="authenticationManager" ref="dealerAuthenticationManager" />
+		<!-- 用户是否拥有所请求资源的权限 -->
+		<beans:property name="accessDecisionManager" ref="nirvanaAccessDecisionManager" />
+		<!-- 资源与权限对应关系 -->
+		<beans:property name="securityMetadataSource" ref="dealerSecurityMetadataSource" />
+	</beans:bean>
+
+	<!-- dealer 的AuthenticationProvider配置 -->
+	<beans:bean id="dealerAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="dealerUserDetailServiceImpl" />
+		<beans:property name="hideUserNotFoundExceptions"
+			value="false" />
+	</beans:bean>
+
+	<!-- dealer 的 UserDetailService 配置 -->
+	<beans:bean id="dealerUserDetailServiceImpl"
+		class="com.nirvana.security.DealerUserDetailServiceImpl" />
+
+	<!-- dealer 的 SecurityMetadataSource 配置 -->
+	<beans:bean id="dealerSecurityMetadataSource"
+		class="com.nirvana.security.DealerSecurityMetadataSource" />
+
+	<!-- ################################################## store ######################################################## -->
+
+	<!-- store app 的过滤器链配置 -->
+	<http use-expressions="true" auto-config="true" pattern="/store/app/**"
+		authentication-manager-ref="storeAuthenticationManager"
+		entry-point-ref="sendJsonAuthenticationEntryPoint">
+		<form-login login-processing-url="/store/app/login"
+			username-parameter="username" password-parameter="password"
+			authentication-success-handler-ref="jsonAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="jsonAuthenticationFailureHandler" />
+		<logout invalidate-session="true" logout-url="/store/app/logout" />
+		<!-- session-fixation-protection="none" 此设置禁用默认的SessionManagementFilter -->
+		<session-management session-fixation-protection="none" />
+		<remember-me user-service-ref="storeUserDetailServiceImpl" />
+		<access-denied-handler ref="jsonAccessDeniedHandler" />
+		<custom-filter ref="storeAppSessionManagementFilter"
+			position="SESSION_MANAGEMENT_FILTER" />
+		<custom-filter ref="storeAppConCurrentSessionFilter"
+			position="CONCURRENT_SESSION_FILTER" />
+		<custom-filter ref="storeUserSecurityFilter" before="FILTER_SECURITY_INTERCEPTOR" />
+	</http>
+
+	<!--store app 的SessionManagementFilter配置 -->
+	<beans:bean id="storeAppSessionManagementFilter"
+		class="org.springframework.security.web.session.SessionManagementFilter">
+		<beans:constructor-arg name="securityContextRepository"
+			ref="securityContextRepository" />
+		<!-- 处理验证失败的handler -->
+		<beans:property name="authenticationFailureHandler"
+			ref="jsonAuthenticationFailureHandler" />
+		<!-- 注入session无效的处理策略 -->
+		<beans:property name="invalidSessionStrategy" ref="jsonInvalidSessionStrategy" />
+	</beans:bean>
+
+	<!-- store app 的ConCurrentSessionFilter配置 -->
+	<beans:bean id="storeAppConCurrentSessionFilter"
+		class="com.nirvana.security.JsonConcurrentSessionFilter" />
+
+
+	<!-- store 的AuthenticationManager配置 -->
+	<authentication-manager id="storeAuthenticationManager">
+		<authentication-provider ref="storeAuthenticationProvider" />
+	</authentication-manager>
+
+	<!-- store 的UserSecurityFilter配置 -->
+	<beans:bean id="storeUserSecurityFilter" class="com.nirvana.security.NirvanaSecurityFilter">
+		<!-- 用户拥有的权限 -->
+		<beans:property name="authenticationManager" ref="storeAuthenticationManager" />
+		<!-- 用户是否拥有所请求资源的权限 -->
+		<beans:property name="accessDecisionManager" ref="nirvanaAccessDecisionManager" />
+		<!-- 资源与权限对应关系 -->
+		<beans:property name="securityMetadataSource" ref="storeSecurityMetadataSource" />
+	</beans:bean>
+
+
+	<!-- store 的AuthenticationProvider配置 -->
+	<beans:bean id="storeAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="storeUserDetailServiceImpl" />
+		<beans:property name="hideUserNotFoundExceptions"
+			value="false" />
+	</beans:bean>
+
+	<!-- store 的 UserDetailService 配置 -->
+	<beans:bean id="storeUserDetailServiceImpl"
+		class="com.nirvana.security.StoreUserDetailServiceImpl" />
+
+	<!-- store 的 SecurityMetadataSource 配置 -->
+	<beans:bean id="storeSecurityMetadataSource"
+		class="com.nirvana.security.StoreSecurityMetadataSource" />
+
+	<!-- ################################################## common ######################################################## -->
+
+
+	<!-- securityContextRepository -->
+	<beans:bean id="securityContextRepository"
+		class="org.springframework.security.web.context.HttpSessionSecurityContextRepository" />
+
+
+	<!-- 用户的密码加密或解密 -->
+	<beans:bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+
+
+
+	<beans:bean id="sendJsonAuthenticationEntryPoint"
+		class="com.nirvana.security.SendJsonAuthenticationEntryPoint" />
+
+	<beans:bean id="jsonAccessDeniedHandler"
+		class="com.nirvana.security.handler.JsonAccessDeniedHandler" />
+
+	<beans:bean id="jsonAuthenticationFailureHandler"
+		class="com.nirvana.security.handler.JsonAuthenticationFailureHandler" />
+
+	<beans:bean id="jsonAuthenticationSuccessHandler"
+		class="com.nirvana.security.handler.JsonAuthenticationSuccessHandler" />
+
+	<beans:bean id="jsonInvalidSessionStrategy"
+		class="com.nirvana.security.handler.JsonInvalidSessionStrategy" />
+
+	<beans:bean id="nirvanaAccessDecisionManager"
+		class="com.nirvana.security.NirvanaAccessDecisionManager" />
+
+	<beans:bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<beans:property name="basename" value="classpath:messages_zh_CN" />
+	</beans:bean>
+
+	<beans:bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
+
+</beans:beans>  

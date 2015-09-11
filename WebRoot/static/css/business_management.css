@@ -1,0 +1,40 @@
+.main{
+    padding-top: 30px;
+    min-width:1000px;
+    width: 85%;
+    margin: 0 auto;
+}
+.left-slider{
+    float: left;
+    background: #fff;
+    width: 15%;
+}
+.right-slider{
+    float: left;
+    width: 80%;
+    margin-left: 2%;
+    background: #fff;
+    margin-bottom:30px
+}
+.left-slider ul{
+    border: 1px solid #d3d3d3;
+}
+.left-slider ul li{
+    text-align: center;
+    cursor: pointer;
+}
+.current{
+    background:#ebebeb;
+}
+.link-line{
+    height: 45px;
+    position: relative;
+    padding: 0 25px;
+}
+.space-line{
+    height: 10px;
+    background: #ebebeb
+}
+.ablock{
+    padding: 15px 0;
+}

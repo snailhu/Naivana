@@ -1,0 +1,43 @@
+.main{
+    padding-top: 30px;
+    width: 80%;
+    margin: 0 auto;
+}
+.left-container{
+    float: left;
+    width: 15%;
+}
+.right-container{
+    float: left;
+    width: 80.9%;
+    padding: 0 2% 20px;
+    border-left: 1px solid #d3d3d3;
+}
+.content{
+    background: #fff;
+}
+.left-container ul li{
+    text-align: left;
+    padding: 10px  0;
+}
+.current{
+    background: #0066b3;
+}
+.current a{
+    color: #fff;
+}
+.arrow{
+    display: inline-block;
+    width: 35%;
+    text-align: center;
+}
+.arrow{
+    *display:inline;
+}
+.label{
+    color: #909090;
+}
+.link-line{
+    height: 45px;
+    position: relative;
+}
